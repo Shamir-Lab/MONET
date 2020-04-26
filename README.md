@@ -13,7 +13,7 @@ from monet import Monet
 # helper function to read the example csv files.
 path_to_csv_dir = '/path/to/data/'
 sim_mats, _ = data_prep.process_data(path=path_to_csv_dir)
-# main_loop is the main Monet function. See its documentation for example on the parameters.
+# main_loop is the main Monet function. See its documentation for a full explanation on the parameters and return values.
 monet_ret = Monet().main_loop(data=sim_mats, num_of_patients_in_seed=26, num_of_seeds=15, min_mod_size=13)
 monet_results, total_time, super_g, iteration_times, total_weight = monet_ret
 #all_modules is now a dict mapping module names to module objects.

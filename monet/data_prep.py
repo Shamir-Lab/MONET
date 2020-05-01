@@ -3,16 +3,13 @@ Module contains code to read matrices written by the R code that executes MONET.
 It is not required if running MONET from python.
 """
 
-from sklearn.metrics.cluster import adjusted_rand_score
 import numpy as np
 import pandas as pd
-from monet import Monet
+from monet.monet import Monet
 import os
-from scipy import stats
 import random
 import operator
 import networkx as nx
-#import matplotlib.pyplot as plt
 import time
 
 def expression_matrix_to_similarity(mat):

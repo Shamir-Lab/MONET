@@ -9,9 +9,8 @@ import time
 import heapq
 import pandas as pd
 import networkx as nx
-from module import Module
+from monet.module import Module
 import numpy as np
-import scipy as sp
 
 
 def best_samples_to_add(module, glob_var):

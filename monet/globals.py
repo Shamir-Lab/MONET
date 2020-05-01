@@ -1,4 +1,5 @@
-from module import Module
+from monet.module import Module
+
 class Globals:
     """
     The class contains the state of a MONET run - all patients, modules, omic graphs, and configuration.

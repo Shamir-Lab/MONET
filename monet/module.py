@@ -1,4 +1,5 @@
 import time
+
 class Module:
     """
     Represents a single module (set of patients and omics).

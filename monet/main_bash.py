@@ -11,8 +11,8 @@ import numpy as np
 import pandas as pd
 import networkx as nx
 import argparse
-import data_prep
-from monet import Monet
+from monet import data_prep
+from monet.monet import Monet
 
 def export_monet_ret(monet_ret, output_dir_path):
     res, total_time, super_g, iteration_times, total_weight = monet_ret
@@ -91,6 +91,6 @@ if __name__ == "__main__":
         init_modules = None
 
     monet_ret = Monet().main_loop(data=dist_mats, is_input_raw=is_input_raw, init_modules=init_modules, iters=num_iters, min_mod_size=min_mod_size, max_pats_per_action=max_pats_per_action,
-                                  num_of_patients_in_seed=seed_size, num_of_seeds=num_seeds, percentile_shift=percentile_shift, percentile_remove_edge=args.percentile_remove_edge)
+                                  num_of_samples_in_seed=seed_size, num_of_seeds=num_seeds, percentile_shift=percentile_shift, percentile_remove_edge=args.percentile_remove_edge)
     export_monet_ret(monet_ret, output_dir_path)
 

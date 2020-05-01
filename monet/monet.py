@@ -2,20 +2,14 @@ import heapq
 import math
 import networkx as nx
 import numpy as np
-import scipy as sp
-from scipy import spatial
 import pandas as pd
-import sklearn as sk
-from sklearn import preprocessing
 import time
 import os
-from patient import Patient
-from module import Module
-from omic import Omic
-from sklearn.mixture import GaussianMixture
-from scipy import stats
-from globals import Globals
-from module_score import *
+from monet.patient import Patient
+from monet.module import Module
+from monet.omic import Omic
+from monet.globals import Globals
+from monet.module_score import *
 import random
 
 class Monet:
@@ -81,7 +75,7 @@ class Monet:
             glob_var.gmm_params.update({omic: {'mean': means, 'cov': covs, 'percentile': percentile}})
         return glob_var
 
-    def get_seeds(self, glob_var, num_of_seeds=3, num_of_patients_in_seed=10):
+    def get_seeds(self, glob_var, num_of_seeds=3, num_of_samples_in_seed=10):
         """
 	Create seed modules.
 	"""
@@ -109,7 +103,7 @@ class Monet:
             rand_pat_name = cur_nodes[rand_pat_index]
             rand_pat_in_adj = [pat[0] for pat in adj].index(rand_pat_name)
             neighbors = [(key, adj[rand_pat_in_adj][1][key]['weight']) for key in adj[rand_pat_in_adj][1]]
-            neighbors = sorted(neighbors, key=lambda x: x[1], reverse=True)[:(num_of_patients_in_seed - 1)]
+            neighbors = sorted(neighbors, key=lambda x: x[1], reverse=True)[:(num_of_samples_in_seed - 1)]
             nodes = {rand_pat_name: glob_var.patients[rand_pat_name]}
             for nei in neighbors:
                 if nei[1] > 0 and nei[0] != rand_pat_name:
@@ -198,8 +192,39 @@ class Monet:
         return glob_var
 
     def main_loop(self, data, is_input_raw=False, init_modules=None, iters = 500, 
-                  num_of_seeds=10, num_of_patients_in_seed=10, min_mod_size=10, max_pats_per_action=10, percentile_shift=None, percentile_remove_edge=None):
-        """Should write a detailed documentation..."""
+                  num_of_seeds=10, num_of_samples_in_seed=10, min_mod_size=10, max_pats_per_action=10, percentile_shift=None, percentile_remove_edge=None):
+        """
+	:param data: the omic graphs in which MONET will detect modules. data should be a dict mapping omic names to the omic graphs.
+	Each omic graph is a pandas DataFrame with shape (num_samples, num_samples), where each entry in the dataframe signifies the similarity
+	between a pair of samples. Column and row names should be the sample ids.
+	:param is_input_raw: True <=> the input data is the raw feature values (instead of the omic graphs). Currently only omic graphs inputs are supported,
+	so this value has to be False.
+	:type is_input_raw: bool.
+	:param init_modules: an optional module initialization for MONET. A dict mapping between module names to sample ids (as appear in the feature names in "data").
+	All modules are initialized to cover all omics. Set to None to use MONET's seed finding algorithm for initialization.
+	:param iters: maximal number of iterations.
+	:type iters: maximal number of iterations.
+	:param num_of_seeds: number of seeds to create in MONET's module initialization algorithm.
+	:type num_of_seeds: int.
+	:param num_of_samples_in_seed: number of samples to put in each seeds to create in MONET's module initialization algorithm.
+	:type num_of_samples_in_seed: int.
+	:param min_mod_size: minimal size (number of samples) for a MONET module.
+	:type min_mod_size: int.
+	:param max_pats_per_action: maximal number of samples in a single MONET action 
+	(maximal number of samples added to a module or replaced between modules in a single action).
+	:type max_pats_per_action: int.
+	:param percentile_shift: not currently being used.
+	:param percentile_remove_edge: only edges with weight percentile above (for positive weights) or below (for negative weights) this percentile
+	are kept in the graph. For example, percentile_remove_edge=90 keeps only the 10% edges with highest positive weight and lowest negative weight in the graph.
+	None keeps all edges in the graph.
+	:type percentile_remove_edge: int.
+	:return: MONET's detected modules in the data. The returned object is a dict mapping module names to Module objects. Every module instance includes its
+	set of patients (under the "patients" attribute) and its set of omics (the "omics" attribute).
+
+	Note that MONET uses both the numpy random seed and the "random" module's random seed. There, to we recommend you set both seeds before executing the algorithm:
+	numpy.random.seed(rand_seed)
+	random.seed(rand_seed)
+	"""
         start_time = time.time()
         glob_var = Globals(len(self.functions))
         glob_var = self.create_env(glob_var, data, is_input_raw, percentile_shift, percentile_remove_edge)
@@ -207,7 +232,7 @@ class Monet:
         glob_var.max_pats_per_action = max_pats_per_action
 
         if init_modules is None:
-            glob_var = self.get_seeds(glob_var, num_of_seeds=num_of_seeds, num_of_patients_in_seed=num_of_patients_in_seed)
+            glob_var = self.get_seeds(glob_var, num_of_seeds=num_of_seeds, num_of_samples_in_seed=num_of_samples_in_seed)
         else:
             glob_var = self.create_seeds_from_solution(glob_var, init_modules)
 

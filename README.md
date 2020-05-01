@@ -5,6 +5,11 @@ This repository contains two parts. The first part is the code of the MONET pack
 The second part of the repository is the code used to produce the results for MONET's paper. This code is written in R. The required libraries, data, and configuration are documented inside the code. It is places under the directory R_code/.
 The repository also contains a toy multi-omic dataset to demonstrate how to use MONET. It is places under the directory data/.
 
+To install MONET clone the repository and run in command line:
+```{cmd}
+python setup.py install
+```
+
 Now follows a brief code example showing how to use MONET.
 ```{python}
 from monet import data_prep

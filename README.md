@@ -7,8 +7,8 @@ The repository also contains a toy multi-omic dataset to demonstrate how to use 
 
 Now follows a brief code example showing how to use MONET.
 ```{python}
-import data_prep
-from monet import Monet
+from monet import data_prep
+from monet.monet import Monet
 
 # helper function to read the example csv files.
 path_to_csv_dir = '/path/to/data/'

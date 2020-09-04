@@ -7,5 +7,5 @@ setup(name='monet',
       description='python implementation of the MONET algorithm for multi-omic module detection',
       license='GPL-3.0',
       python_requires='>3.0.0',
-      install_requires=['numpy', 'pandas', 'networkx']
+      install_requires=['numpy', 'pandas', 'networkx', 'scipy']
 )
